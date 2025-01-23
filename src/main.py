@@ -3,6 +3,7 @@ from dataset import Dataset
 import inference
 from sentence_transformers import SentenceTransformer
 from src.model import Model
+import ensemble
 
 
 def main():
@@ -26,7 +27,7 @@ def main():
     # models process
     models_val_predictions = {}
     models_test_predictions = {}
-    model_accuracies = {}
+    models_accuracies = {}
     models_fingerprint = {}
     for model_name in args.get_param("models"):
         model = Model(model_name)
@@ -34,12 +35,12 @@ def main():
 
         models_val_predictions[model_name] = val_predictions
         models_test_predictions[model_name] = test_predictions
-        model_accuracies[model_name] = accuracy
+        models_accuracies[model_name] = accuracy
         models_fingerprint[model_name] = fingerprint
 
 
     # ensemble results
-
+    ensemble.perform_ensemble(models_test_predictions, models_accuracies, models_fingerprint, args)
 
 if __name__ == "__main__":
     main()
