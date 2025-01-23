@@ -2,7 +2,7 @@ from arguments_manager import ArgumentsManager
 from dataset import Dataset
 import inference
 from sentence_transformers import SentenceTransformer
-from src.model import Model
+from model import Model
 import ensemble
 
 
