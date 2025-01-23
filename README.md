@@ -22,9 +22,78 @@
    ```bash
    git clone https://github.com/.../dfpe.git
    cd dfpe
+   ```
 2. Install the dependencies
    ```bash
    pip install -r requirements.txt
+   ```
+
 ## Usage
 
+### Running DFPE
+
+The main script for training and evaluation is `main.py`. Below is a description of the required and optional arguments:
+
+```bash
+python main.py --help
+```
+
+**Arguments:**
+
+**Required:**
+- `--models`, `-m`  
+  LLM models list separated by commas (e.g., "model1 model2 model3").
+- `--question-column`, `-q`  
+  Name of the question column in the dataset.
+- `--choices-column`, `-c`  
+  Name of the choices column in the dataset.
+- `--subject-column`, `-cat`  
+  Name of the subject column in the dataset.
+- `--label-column`, `-l`  
+  Name of the label column in the dataset.
+- `--embedding-model`, `-e`  
+  Embedding model to use for encoding the dataset.
+
+**Optional:**
+- `--hf-dataset-name`, `-hd`  
+  Hugging Face dataset name (if applicable).
+- `--dbscan-epsilon`, `-eps`  
+  DBSCAN epsilon value for clustering. Default: 0.5.
+- `--quantile-threshold`, `-qt`  
+  Quantile threshold for filtering data. Default: 0.75.
+- `--scaling-factor`, `-s`  
+  Scaling factor for normalization or transformation. Default: 1.0.
+- `--batch-size`, `-b`  
+  Batch size for model inference. Default: 32.
+
+### Example Command
+
+```bash
+python main.py \
+  --models gpt-3,flan-t5,bert \
+  --hf-dataset-name mmlu \
+  --question-column question \
+  --choices-column choices \
+  --subject-column subject \
+  --label-column answer \
+  --embedding-model all-MiniLM-L6-v2 \
+  --dbscan-epsilon 0.7 \
+  --quantile-threshold 0.8 \
+  --scaling-factor 1.2 \
+  --batch-size 16
+```
+
 ## Repository Stracture
+```text
+.
+├── src/                       # Source Code Directory
+    ├── arguments_manager.py   # Arguments Management
+    ├── dataset.py             # Dataset Wrapper
+    ├── ensemble.py            # Ensembling Predictions
+    ├── inference.py           # Text Generatoin Loop
+    ├── main.py                # Main
+    ├── model.py               # Model Wrapper
+    └── utils.py               # General-Purpose Utils
+├── requirements.txt           # Required Python packages
+└── README.md                  # Project README
+```
