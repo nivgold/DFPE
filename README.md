@@ -1,10 +1,5 @@
 # DFPE: A Diverse Fingerprint Ensemble for Enhancing LLM Performance - Official Implementation
 
-<p align="center">
-  <img src="https://img.shields.io/badge/License-MIT-blue.svg" alt="License">
-  <img src="https://img.shields.io/badge/Paper-ArXiv-green.svg" alt="Paper">
-</p>
-
 ![proposed framework](https://github.com/nivgold/DFPE/blob/master/DFPE_figure.jpg)
 
 ## Abstract
