@@ -139,7 +139,7 @@ def perform_ensemble(models_test_predictions,
     for model_name in models_fingerprint:
         subjects.update(models_fingerprint[model_name].keys())
 
-    cluster_labels = cluster_models_per_subject(models_fingerprint, subjects, esp=args.get_param("dbscan-epsilon"))
+    cluster_labels = cluster_models_per_subject(models_fingerprint, subjects, esp=args.get_param("dbscan_epsilon"))
     def print_highest_cluster_number(cluster_labels):
         for subject, models in cluster_labels.items():
             highest_cluster_number = max(models.values())
@@ -173,8 +173,8 @@ def perform_ensemble(models_test_predictions,
             selected_models,
             models_subject_test_predictions,
             models_subject_accuracies,
-            quantile_param=args.get_param("quantile-threshold"),
-            scaling_factor=args.get_param("scaling-factor")
+            quantile_param=args.get_param("quantile_threshold"),
+            scaling_factor=args.get_param("scaling_factor")
         )
         # Calculate accuracy
         accuracy = correct / total if total > 0 else 0

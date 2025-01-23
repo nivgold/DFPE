@@ -39,7 +39,7 @@ python main.py --help
 
 **Required:**
 - `--models`, `-m`  
-  LLM models list separated by commas (e.g., "model1 model2 model3").
+  LLM models list separated by commas (e.g., "model1,model2,model3").
 - `--question-column`, `-q`  
   Name of the question column in the dataset.
 - `--choices-column`, `-c`  
@@ -67,13 +67,13 @@ python main.py --help
 
 ```bash
 python main.py \
-  --models gpt-3,flan-t5,bert \
-  --hf-dataset-name mmlu \
-  --question-column question \
-  --choices-column choices \
-  --subject-column subject \
-  --label-column answer \
-  --embedding-model all-MiniLM-L6-v2 \
+  --models "Qwen/Qwen2.5-3B-Instruct,microsoft/Phi-3.5-mini-instruct" \
+  --hf-dataset-name "cais/mmlu" \
+  --question-column "question" \
+  --choices-column "choices" \
+  --subject-column "subject" \
+  --label-column "answer" \
+  --embedding-model "all-MiniLM-L6-v2" \
   --dbscan-epsilon 0.7 \
   --quantile-threshold 0.8 \
   --scaling-factor 1.2 \

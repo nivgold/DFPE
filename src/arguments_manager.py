@@ -16,7 +16,7 @@ class ArgumentsManager:
         parser = argparse.ArgumentParser(description="DFPE options")
 
         # models to use
-        parser.add_argument("--models", "-m", type=lambda x: [i.strip() for i in x.split(",")], nargs='+', required=True,
+        parser.add_argument("--models", "-m", nargs='+', required=True,
                             help="LLM Models list separated by comma")
 
         # HF dataset name
@@ -69,6 +69,9 @@ class ArgumentsManager:
     def parse_args(self):
         parsed_args = self.parser.parse_args()
         self.parsed_args = parsed_args.__dict__
+        
+        # convert models strings to list
+        self.parsed_args['models'] = [i.strip() for i in self.parsed_args['models'][0].split(",")]
 
     def get_param(self, param_name):
         return self.parsed_args.get(param_name, None)

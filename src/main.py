@@ -13,15 +13,15 @@ def main():
 
     # prepare dataset
     dataset = Dataset(
-        dataset_path=args.get_param("hf-dataset-name"),
-        question_column_name=args.get_param("question-column"),
-        choices_column_name=args.get_param("choices-column"),
-        subject_column_name=args.get_param("subject-column"),
-        label_column_name=args.get_param("label-column")
+        dataset_path=args.get_param("hf_dataset_name"),
+        question_column_name=args.get_param("question_column"),
+        choices_column_name=args.get_param("choices_column"),
+        subject_column_name=args.get_param("subject_column"),
+        label_column_name=args.get_param("label_column")
     )
 
     # prepare embedding model
-    embedding_model = SentenceTransformer(args.get_param("embedding-model"))
+    embedding_model = SentenceTransformer(args.get_param("embedding_model"))
 
     # TODO: parallel
     # models process
@@ -31,7 +31,7 @@ def main():
     models_fingerprint = {}
     for model_name in args.get_param("models"):
         model = Model(model_name)
-        val_predictions, test_predictions, accuracy, fingerprint = inference.process_model(dataset, model, embedding_model, batch_size=args.get_param("batch-size"))
+        val_predictions, test_predictions, accuracy, fingerprint = inference.process_model(dataset, model, embedding_model, batch_size=args.get_param("batch_size"))
 
         models_val_predictions[model_name] = val_predictions
         models_test_predictions[model_name] = test_predictions
