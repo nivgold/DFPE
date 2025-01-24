@@ -24,11 +24,11 @@ def process_model(dataset, model, embedding_model, batch_size=1):
 
         val_questions = dataset.validation_subject_questions[subject]
         model_val_questions = val_questions.copy()
-        num_batches = (len(val_questions) + batch_size - 1) // batch_size
+        num_batches = int((len(val_questions) + batch_size - 1) // batch_size)
 
         for batch_idx in tqdm(range(num_batches), desc=f"Validation {subject}"):
-            start_idx = batch_idx * batch_size
-            end_idx = min((batch_idx + 1) * batch_size, len(model_val_questions))
+            start_idx = int(batch_idx * batch_size)
+            end_idx = int(min((batch_idx + 1) * batch_size, len(model_val_questions)))
             batch_points = model_val_questions[start_idx:end_idx]
             batch_prompts = [i['prompt'] for i in batch_points]
 
@@ -64,11 +64,11 @@ def process_model(dataset, model, embedding_model, batch_size=1):
 
         test_questions = dataset.test_subject_questions[subject]
         model_test_questions = test_questions.copy()
-        num_batches = (len(model_test_questions) + batch_size - 1) // batch_size
+        num_batches = int((len(model_test_questions) + batch_size - 1) // batch_size)
 
         for batch_idx in tqdm(range(num_batches), desc=f"Test {subject}"):
-            start_idx = batch_idx * batch_size
-            end_idx = min((batch_idx + 1) * batch_size, len(model_test_questions))
+            start_idx = int(batch_idx * batch_size)
+            end_idx = int(min((batch_idx + 1) * batch_size, len(model_test_questions)))
             batch_points = model_test_questions[start_idx:end_idx]
             batch_prompts = [i['prompt'] for i in batch_points]
 

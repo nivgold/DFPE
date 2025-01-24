@@ -1,15 +1,15 @@
 import re
 
 
-def format_prompt(question, options):
+def format_prompt(question, choices):
     # Formats the prompt without chain-of-thought reasoning
-    choices = ['A', 'B', 'C', 'D'][:len(options)]
+    choices = ['A', 'B', 'C', 'D'][:len(choices)]
     prompt = (
         "Answer the following multiple-choice question by providing the most appropriate response. "
         f"Answer should be one among [{', '.join(choices)}].\n\n"
     )
     prompt += f"Question: {question}\n"
-    for i, option in enumerate(options):
+    for i, option in enumerate(choices):
         prompt += f"{choices[i]}. {option}\n"
     prompt += "Answer:"
     return prompt

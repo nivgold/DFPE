@@ -20,31 +20,31 @@ class Dataset:
 
         self.validation_data = self.preprocess(dataset['validation'])
         self.test_data = self.preprocess(dataset['test'])
-        self.subjects = set([item["category"] for item in self.validation_data])
+        self.subjects = set([item["subject"] for item in self.validation_data])
 
         # Organize validation and test questions by subject
         self.validation_subject_questions = defaultdict(list)
         self.test_subject_questions = defaultdict(list)
         for example in self.validation_data:
-            subject = example[self.subject_column_name]
+            subject = example["subject"]
             self.validation_subject_questions[subject].append(example)
         for example in self.test_data:
-            subject = example[self.subject_column_name]
+            subject = example["subject"]
             self.test_subject_questions[subject].append(example)
 
     def preprocess(self, dataset):
         res = []
         for each in dataset:
             question = each[self.question_column_name]
-            options = each[self.choices_column_name]
+            choices = each[self.choices_column_name]
             correct_answer_index = int(each[self.label_column_name])
-            category = each[self.subject_column_name]
+            subject = each[self.subject_column_name]
             res.append({
                 "question": question,
-                "prompt": utils.format_prompt(question, options),
-                "options": options,
+                "prompt": utils.format_prompt(question, choices),
+                "choices": choices,
                 "answer_index": correct_answer_index,
                 "correct_answer": ['A', 'B', 'C', 'D'][correct_answer_index],
-                "category": category
+                "subject": subject
             })
         return res
