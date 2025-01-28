@@ -4,6 +4,7 @@ import inference
 from sentence_transformers import SentenceTransformer
 from model import Model
 import ensemble
+import utils
 
 
 def main():
@@ -37,6 +38,18 @@ def main():
         models_test_predictions[model_name] = test_predictions
         models_accuracies[model_name] = accuracy
         models_fingerprint[model_name] = fingerprint
+
+    bsmov_overall_acc, bsmov_subject_acc = utils.calculate_best_single_metrics(models_val_predictions)
+    bsm_overall_acc, bsm_subject_acc = utils.calculate_best_single_metrics(models_test_predictions)
+    print("BSM Overall-Accuracy: ")
+    print(bsm_overall_acc)
+    print("BSM Subject-Accuracy: ")
+    print(bsm_subject_acc)
+
+    print("BSMoV Overall-Accuracy")
+    print(bsmov_overall_acc)
+    print("BSMoV Subject-Accuracy")
+    print(bsmov_subject_acc)
 
 
     # ensemble results

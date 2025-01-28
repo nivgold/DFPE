@@ -84,7 +84,8 @@ def ensemble_predictions_on_test_set(selected_models, models_subject_test_predic
             weights = np.where(above_threshold, 1.0 / num_models_above_threshold, 0.0)
 
     # Initialize metrics
-    correct = 0
+    mvoting_correct = 0
+    dfpe_correct = 0
     total = 0
 
     test_questions = list(models_subject_test_predictions.values())[0]
@@ -96,6 +97,21 @@ def ensemble_predictions_on_test_set(selected_models, models_subject_test_predic
         choice_labels = ['A', 'B', 'C', 'D'][:len(choices)]
         choice_probs = {choice: 0.0 for choice in choice_labels}
 
+        # majority ensemble
+        majority_choices = {choice: 0 for choice in choice_labels}
+        for i, model_name in enumerate(selected_models):
+            predictions = models_subject_test_predictions[model_name]
+            if idx >= len(predictions):
+                continue  # Skip if prediction index is out of range
+            prediction = predictions[idx]
+            predicted_answer = prediction.get('predicted_answer', None)
+            if predicted_answer in choice_probs:
+                choice_probs[predicted_answer] += 1
+        final_majority_answer = max(majority_choices, key=majority_choices.get)
+        if final_majority_answer == correct_answer:
+            mvoting_correct += 1
+
+        # DFPE ensemble
         for i, model_name in enumerate(selected_models):
             weight = weights[i]
             if weight == 0:
@@ -123,10 +139,10 @@ def ensemble_predictions_on_test_set(selected_models, models_subject_test_predic
 
         # Update metrics
         if final_answer == correct_answer:
-            correct += 1
+            dfpe_correct += 1
         total += 1
 
-    return correct, total
+    return dfpe_correct, mvoting_correct, total
 
 
 def perform_ensemble(models_test_predictions,
@@ -153,7 +169,8 @@ def perform_ensemble(models_test_predictions,
     for subject in subjects:
         print(f"Subject: {subject}, Mean Accuracy: {mean_accuracies[subject]:.4f}")
 
-    total_correct = 0
+    total_dfpe_correct = 0
+    total_mvoting_correct = 0
     total_questions = 0
 
     # Initialize a dictionary to store per-subject results
@@ -169,36 +186,50 @@ def perform_ensemble(models_test_predictions,
         models_subject_test_predictions = {model: value[subject] for model, value in models_test_predictions.items() if model in selected_models}
         models_subject_accuracies = {model: value[subject] for model, value in model_accuracies.items() if model in selected_models}
         # Perform ensemble predictions on test set with scaling_factor and quantile_param
-        correct, total = ensemble_predictions_on_test_set(
+        dfpe_correct, mvoting_correct, total = ensemble_predictions_on_test_set(
             selected_models,
             models_subject_test_predictions,
             models_subject_accuracies,
             quantile_param=args.get_param("quantile_threshold"),
             scaling_factor=args.get_param("scaling_factor")
         )
-        # Calculate accuracy
-        accuracy = correct / total if total > 0 else 0
-        print(f"Ensemble Accuracy on Test Set for subject '{subject}': {accuracy * 100:.3f}%")
 
-        total_correct += correct
+        # Calculate accuracy
+        dfpe_subject_accuracy = dfpe_correct / total if total > 0 else 0
+        mvoting_subject_accuracy = mvoting_correct / total if total > 0 else 0
+
+        total_dfpe_correct += dfpe_correct
+        total_mvoting_correct += mvoting_correct
         total_questions += total
 
         # Store per-subject results
         per_subject_results[subject] = {
             "selected_models": selected_models,
-            "correct": correct,
+            "dfpe_correct": dfpe_correct,
+            "mvoting_correct": mvoting_correct,
             "total": total,
-            "accuracy": correct / total if total > 0 else 0
+            "dfpe_accuracy": dfpe_subject_accuracy,
+            "mvoting_accuracy": mvoting_subject_accuracy
         }
 
-        # Calculate overall accuracy
-        overall_accuracy = total_correct / total_questions if total_questions > 0 else 0
-        print(f"\nOverall Ensemble Accuracy on Test Set: {overall_accuracy * 100:.3f}%")
+    # Print Subject Accuracy
+    print("MVoting Subject-Accuracy: ")
+    print({subject:vals['mvoting_accuracy'] for subject,vals in per_subject_results.items()})
 
-        # Calculate and print the mean accuracy for each model
-        model_mean_accuracies = {model: float(np.mean(list(subject_acc.values()))) if subject_acc else 0.0 for
-                                 model, subject_acc in model_accuracies.items()}
-        print("\nMean accuracy per model:")
-        for model, mean_acc in model_mean_accuracies.items():
-            print(f"Model: {model}, Mean Accuracy: {mean_acc:.4f}")
+    print("DFPE Subject-Accuracy: ")
+    print({subject: vals['dfpe_accuracy'] for subject, vals in per_subject_results.items()})
 
+
+    # Calculate overall accuracy
+    dfpe_overall_accuracy = total_dfpe_correct / total_questions if total_questions > 0 else 0
+    mvoting_overall_accuracy = total_mvoting_correct / total_questions if total_questions > 0 else 0
+
+    # Calculate subject accuracy average
+    dfpe_subject_accuracy_avg = np.mean([i['dfpe_accuracy'] for i in per_subject_results.values()])
+    mvoting_subject_accuracy_avg = np.mean([i['mvoting_accuracy'] for i in per_subject_results.values()])
+
+    print(f"MVoting Overall-Accuracy: {mvoting_overall_accuracy:.3}")
+    print(f"DFPE Overall-Accuracy: {dfpe_overall_accuracy:.3}")
+
+    print(f"MVoting Subject-Accuracy Average: {mvoting_subject_accuracy_avg:.3}")
+    print(f"DFPE Subject-Accuracy Average : {dfpe_subject_accuracy_avg:.3}")
