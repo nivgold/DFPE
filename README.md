@@ -1,4 +1,3 @@
-# DFPE: A Diverse Fingerprint Ensemble for Enhancing LLM Performance - Official Implementation
 
 ![proposed framework](https://github.com/nivgold/DFPE/blob/master/DFPE_figure.jpg)
 
@@ -80,7 +79,7 @@ python main.py \
   --batch-size 16
 ```
 
-## Repository Stracture
+## Repository Structure
 ```text
 .
 ├── src/                       # Source Code Directory
